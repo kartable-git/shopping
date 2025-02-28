@@ -36,18 +36,11 @@ switch ($event->type) {
       $paymentIntent = $event->data->object; // contains a \Stripe\PaymentIntent
       $intent = $paymentIntent->id;
       // this $intent is what I want to store in my database
-      $stripe = new \Stripe\StripeClient($stripeSecretKey);
-      $metadata_order_id = $stripe->checkout->sessions->retrieve('id', []); // Fatal error</b>: 
-      //  Uncaught (Status 404) (Request req_iw3WuCrSgr8pyD) No such checkout.session: id
-      // And metadata is not expandable, so that the metadata_order_id can't be reached directly
+      $metadata = $paymentIntent->metadata;
+      $order_id = $metadata['order_id'];
       $query = 'UPDATE items_cdes SET id_stripe = "'.$intent.'" WHERE order_id = "'.$metadata_order_id.'"';
       $statement = $connect->prepare($query);
       $statement->execute();
-//    I tried with the checkout.session.completed event, but what I want is the confirmation that payment succeded
-//    case 'checkout.session.completed':
-//    $metadata = $event->data->object;
-//    $metadata_order_id = $metadata->order_id;
-//    ...
     break;
     case 'payment_method.attached':
       $paymentMethod = $event->data->object; // contains a \Stripe\PaymentMethod
