@@ -102,9 +102,11 @@ $checkout_session = \Stripe\Checkout\Session::create([
     'success_url' => $YOUR_DOMAIN . '/after-checkout.php?session_id={CHECKOUT_SESSION_ID}',
     "cancel_url" => $YOUR_DOMAIN . '/cancel.php',
     "locale" => "fr",
-    "metadata" => [
-        "order_id" => $order_id
+    "payment_intent_data"=> [
+        "metadata" => [
+        "order_id" => $order_id]
     ]
+
 ]);
 
 //unset($_SESSION["shopping_cart"]);
